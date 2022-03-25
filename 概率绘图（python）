@@ -1,0 +1,19 @@
+import torch
+from matplotlib import pyplot as plt
+from torch.distributions import multinomial
+def set_figsize(figsize=(3.5,2.5)):
+    """设置matplotlib的图表大小"""
+    plt.rcParams['figure.figsize']=figsize
+fair_probs=torch.ones([6])/6
+counts=multinomial.Multinomial(10,fair_probs).sample((500,))
+cum_counts=counts.cumsum(dim=0)
+estimates=cum_counts/cum_counts.sum(dim=1,keepdims=True)
+set_figsize((6,4.5))
+for i in range(6):
+    plt.plot(estimates[:,i].numpy(),
+             label=("p(die="+str(i+1)+")"))
+plt.axhline(y=0.167,color='black',linestyle='dashed')
+plt.gca().set_xlabel('Groups of experiments')
+plt.gca().set_ylabel('Estimated probability')
+plt.legend()
+plt.show()
